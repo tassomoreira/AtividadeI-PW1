@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 
 import app from "./app";
 import PetshopType from "./types/petShopType";
+import PetType from "./types/petType";
 
 const PORT = 3000;
 
@@ -15,7 +16,7 @@ const isCnpjFormatValid = (cnpj:string) => {
 
 const isCnpjUnique = (cnpj: string) => {
     return petshops.every(petshop => petshop.cnpj !== cnpj);
-};
+}
 
 const checkExistsUserAccount = (req:Request, res:Response, next:NextFunction) => {
     const { cnpj } = req.headers;
@@ -39,7 +40,7 @@ const checkExistsUserAccount = (req:Request, res:Response, next:NextFunction) =>
 
     req.petshop = petshop;
 
-    next;
+    next();
 }
 
 app.post("/petshops", (req:Request, res:Response) => {
@@ -73,15 +74,25 @@ app.post("/petshops", (req:Request, res:Response) => {
 
 app.post("/pets", checkExistsUserAccount, (req:Request, res:Response) => {
     try {
-        const { name, type, description, deadline_vaccination } = req.body;
         const petshop = req.petshop;
-
         
-
+        const { name, type, description, deadline_vaccination } = req.body;
         
+        const pet:PetType = {
+            id: uuid(),
+            name,
+            type,
+            description,
+            vaccinated: false,
+            deadline_vaccination: new Date(deadline_vaccination),
+            created_at: new Date()
+        }
 
+        petshop.pets.push(pet);
+
+        res.status(201).json(pet);
     } catch(e) {
-
+        console.error("Erro ao criar pet: " + e);
     }
 });
 
