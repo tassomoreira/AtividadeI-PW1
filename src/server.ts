@@ -19,10 +19,15 @@ const isCnpjUnique = (cnpj: string) => {
 }
 
 const checkExistsUserAccount = (req:Request, res:Response, next:NextFunction) => {
-    const { cnpj } = req.headers;
+    const { cnpj, username } = req.headers;
 
     if(cnpj === undefined) {
         res.status(400).json({ error: "Informe o CNPJ no header da requisição corretamente." });
+        return;
+    }
+
+    if(username === undefined) {
+        res.status(400).json({ error: "Informe o username no header da requisição corretamente." });
         return;
     }
 
@@ -34,7 +39,7 @@ const checkExistsUserAccount = (req:Request, res:Response, next:NextFunction) =>
     const petshop = petshops.find(petshop => petshop.cnpj === cnpj);
 
     if(petshop === undefined) {
-        res.status(404).json({ error: "Não foi possível encontrar petshop informado." });
+        res.status(404).json({ error: `Usuário '${username}' com CNPJ ${cnpj} não existe` });
         return;
     }
 
