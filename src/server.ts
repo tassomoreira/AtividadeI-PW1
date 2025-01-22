@@ -106,4 +106,29 @@ app.get("/pets", checkExistsUserAccount, (req:Request, res:Response) => {
     }
 });
 
+app.put("/pets/:id", checkExistsUserAccount, (req:Request, res:Response) => {
+    try {
+        const id = req.params.id;
+        const pets = req.petshop.pets;
+
+        const pet = pets.find(pet => pet.id === id);
+
+        if(pet === undefined) {
+            res.status(404).json({ error: "Não foi possível encontrar nenhum pet com o id informado." });
+            return;
+        }
+
+        const { name, type, description, deadline_vaccination } = req.body;
+
+        pet.name = name;
+        pet.type = type;
+        pet.description = description;
+        pet.deadline_vaccination = new Date(deadline_vaccination);
+
+        res.status(200).json(pet);
+    } catch(e) {
+        console.error("Erro ao atualizar pet: " + e);
+    }
+});
+
 app.listen(PORT, () => console.log("Server running on port", PORT));
