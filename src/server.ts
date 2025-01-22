@@ -96,4 +96,14 @@ app.post("/pets", checkExistsUserAccount, (req:Request, res:Response) => {
     }
 });
 
+app.get("/pets", checkExistsUserAccount, (req:Request, res:Response) => {
+    try {
+        const petshop = req.petshop;
+
+        res.status(200).json(petshop.pets);
+    } catch(e) {
+        console.error("Erro ao buscar pets: " + e);
+    }
+});
+
 app.listen(PORT, () => console.log("Server running on port", PORT));
