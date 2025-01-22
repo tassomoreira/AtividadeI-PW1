@@ -149,7 +149,26 @@ app.patch("/pets/:id/vaccinated", checkExistsUserAccount, (req:Request, res:Resp
     } catch(e) {
         console.error("Erro ao modificar atributo 'vaccinated' em pet: " + e);
     }
+});
 
+app.delete("/pets/:id", checkExistsUserAccount, (req:Request, res:Response) => {
+    try {
+        const id = req.params.id;
+        const pets = req.petshop.pets;
+
+        const petIndex = pets.findIndex(pet => pet.id === id);
+
+        if(petIndex === -1) {
+            res.status(404).json({ error: "Não foi possível encontrar nenhum pet com o id informado." });
+            return;
+        }
+
+        pets.splice(petIndex, 1);
+
+        res.status(200).json(pets);
+    } catch(e) {
+        console.error("Erro ao excluir pet: " + e);
+    }
 });
 
 app.listen(PORT, () => console.log("Server running on port", PORT));
