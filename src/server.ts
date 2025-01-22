@@ -131,4 +131,25 @@ app.put("/pets/:id", checkExistsUserAccount, (req:Request, res:Response) => {
     }
 });
 
+app.patch("/pets/:id/vaccinated", checkExistsUserAccount, (req:Request, res:Response) => {
+    try {
+        const id = req.params.id;
+        const pets = req.petshop.pets;
+
+        const pet = pets.find(pet => pet.id === id);
+
+        if(pet === undefined) {
+            res.status(404).json({ error: "Não foi possível encontrar nenhum pet com o id informado." });
+            return;
+        }
+
+        pet.vaccinated = true;
+
+        res.status(200).json(pet);
+    } catch(e) {
+        console.error("Erro ao modificar atributo 'vaccinated' em pet: " + e);
+    }
+
+});
+
 app.listen(PORT, () => console.log("Server running on port", PORT));
